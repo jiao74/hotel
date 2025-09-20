@@ -1,0 +1,2142 @@
+<html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>和风旅宿 - 日式商务酒店</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #fafafa;
+            overflow-x: hidden;
+        }
+        
+        /* 导航栏 */
+        nav {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        
+        nav.scrolled {
+            padding: 15px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 300;
+            color: #2c5f2d;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 8px;
+            font-size: 20px;
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+        }
+        
+        .nav-menu a {
+            text-decoration: none;
+            color: #666;
+            font-size: 15px;
+            transition: color 0.3s;
+            position: relative;
+        }
+        
+        .nav-menu a:hover {
+            color: #2c5f2d;
+        }
+        
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #2c5f2d;
+            transition: width 0.3s;
+        }
+        
+        .nav-menu a:hover::after {
+            width: 100%;
+        }
+        
+        /* 主横幅 */
+        .hero {
+            margin-top: 70px;
+            height: 600px;
+            background: linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)),
+                        url('https://images.unsplash.com/photo-1547972333-12dff9566c4b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2000&q=80');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(238, 255, 238, 0.1));
+            z-index: 0;
+        }
+        
+        .hero-content {
+            color: #2c5f2d;
+            animation: fadeInUp 1s ease;
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 300;
+            margin-bottom: 20px;
+            letter-spacing: 4px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .hero p {
+            font-size: 18px;
+            margin-bottom: 30px;
+            color: #444;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+        }
+        
+        .btn-primary {
+            display: inline-block;
+            padding: 12px 40px;
+            background: #2c5f2d;
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            transition: all 0.3s;
+            font-size: 15px;
+            letter-spacing: 1px;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 4px 10px rgba(44, 95, 45, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background: #1e4220;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(44, 95, 45, 0.4);
+        }
+        
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 900px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+            position: relative;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+        }
+        
+        /* 客房详情样式 */
+        .room-detail {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            margin: 30px 0;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .room-detail.active {
+            display: block;
+        }
+        
+        .room-detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .room-detail-title {
+            font-size: 24px;
+            font-weight: 400;
+            color: #2c5f2d;
+        }
+        
+        .room-detail-price {
+            font-size: 22px;
+            font-weight: 500;
+            color: #2c5f2d;
+        }
+        
+        .room-detail-price span {
+            font-size: 14px;
+            font-weight: 400;
+            color: #666;
+        }
+        
+        .room-detail-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .room-detail-gallery {
+            border-radius: 10px;
+            overflow: hidden;
+            height: 350px;
+            background-color: #f5f5f5;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .room-detail-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .room-detail-description {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+        
+        .room-detail-features {
+            margin-bottom: 20px;
+        }
+        
+        .room-detail-features h4 {
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .feature-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+        }
+        
+        .feature-item i {
+            margin-right: 8px;
+            color: #2c5f2d;
+        }
+        
+        .room-detail-actions {
+            margin-top: auto;
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn-secondary {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #f5f5f5;
+            color: #333;
+            text-decoration: none;
+            border-radius: 30px;
+            transition: all 0.3s;
+            font-size: 15px;
+            letter-spacing: 1px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .btn-secondary:hover {
+            background: #e8e8e8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+        }
+        
+        @media (max-width: 768px) {
+            .room-detail-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .room-detail-gallery {
+                height: 250px;
+            }
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #666;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+        
+        .modal-close:hover {
+            background: #e0e0e0;
+            transform: rotate(90deg);
+        }
+        
+        /* 预订表单 */
+        .booking-modal .modal-header {
+            padding: 40px;
+            background: linear-gradient(135deg, #e8f4e8, #d4e8d4);
+            border-radius: 20px 20px 0 0;
+        }
+        
+        .booking-modal h2 {
+            font-size: 28px;
+            color: #2c5f2d;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+        
+        .booking-form {
+            padding: 40px;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+        
+        .form-group label {
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+            background: #fafafa;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2c5f2d;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(44, 95, 45, 0.1);
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .booking-summary {
+            background: #f8faf8;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .booking-summary h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .summary-total {
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+            font-size: 18px;
+            color: #2c5f2d;
+            font-weight: 500;
+        }
+        
+        .form-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+        }
+        
+        .btn-secondary {
+            padding: 12px 30px;
+            background: #f0f0f0;
+            color: #666;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        
+        /* 客房详情模态框 */
+        .room-detail-modal .modal-header {
+            height: 300px;
+            background: linear-gradient(135deg, #e8f4e8, #d4e8d4);
+            border-radius: 20px 20px 0 0;
+            position: relative;
+        }
+        
+        .room-gallery {
+            display: flex;
+            gap: 10px;
+            padding: 20px;
+            background: white;
+            overflow-x: auto;
+        }
+        
+        .gallery-thumb {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+        
+        .gallery-thumb:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .room-detail-content {
+            padding: 40px;
+        }
+        
+        .room-detail-content h2 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+        
+        .room-features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #666;
+            font-size: 15px;
+        }
+        
+        .feature-item::before {
+            content: '✓';
+            color: #2c5f2d;
+            font-weight: bold;
+        }
+        
+        .room-amenities {
+            background: #f8faf8;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 30px 0;
+        }
+        
+        .room-amenities h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .amenities-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .amenity-tag {
+            padding: 8px 15px;
+            background: white;
+            border-radius: 20px;
+            text-align: center;
+            font-size: 13px;
+            color: #666;
+            border: 1px solid #e0e0e0;
+        }
+        
+        /* 特色服务 */
+        .features {
+            padding: 80px 20px;
+            background: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 300;
+            margin-bottom: 20px;
+            color: #2c5f2d;
+            letter-spacing: 2px;
+        }
+        
+        .section-subtitle {
+            text-align: center;
+            color: #999;
+            margin-bottom: 60px;
+            font-size: 14px;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+        }
+        
+        .feature-card {
+            text-align: center;
+            padding: 40px 30px;
+            background: #f8faf8;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(30px);
+            will-change: transform, opacity;
+            backface-visibility: hidden;
+            -webkit-font-smoothing: subpixel-antialiased;
+        }
+        
+        .feature-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #2c5f2d, #4a8f4e);
+            transform: translateX(-100%);
+            transition: transform 0.5s;
+        }
+        
+        .feature-card:hover::before {
+            transform: translateX(0);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+        
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #4a8f4e;
+        }
+        
+        .feature-card h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #333;
+            font-weight: 400;
+        }
+        
+        .feature-card p {
+            color: #777;
+            line-height: 1.8;
+            font-size: 14px;
+        }
+        
+        /* 客房展示 */
+        .rooms {
+            padding: 80px 20px;
+            background: #fafafa;
+        }
+        
+        .room-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .room-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            opacity: 0;
+            transform: translateY(30px);
+            will-change: transform, opacity, box-shadow;
+            backface-visibility: hidden;
+            -webkit-font-smoothing: subpixel-antialiased;
+        }
+        
+        .room-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .room-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        .room-image {
+            height: 250px;
+            background: linear-gradient(135deg, #e8f4e8, #d4e8d4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .room-image::after {
+            content: '和室';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #2c5f2d;
+        }
+        
+        .room-info {
+            padding: 30px;
+        }
+        
+        .room-info h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #333;
+            font-weight: 400;
+        }
+        
+        .room-info p {
+            color: #777;
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        
+        .room-price {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .price {
+            font-size: 24px;
+            color: #2c5f2d;
+            font-weight: 300;
+        }
+        
+        .price span {
+            font-size: 14px;
+            color: #999;
+        }
+        
+        /* 位置信息 */
+        .location {
+            padding: 80px 20px;
+            background: white;
+        }
+        
+        .location-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            margin-top: 50px;
+        }
+        
+        .location-info h3 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+            font-weight: 400;
+        }
+        
+        .location-item {
+            margin-bottom: 20px;
+            padding-left: 30px;
+            position: relative;
+            color: #666;
+            font-size: 15px;
+        }
+        
+        .location-item::before {
+            content: '◉';
+            position: absolute;
+            left: 0;
+            color: #4a8f4e;
+        }
+        
+        #map {
+            height: 400px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        /* 联系我们 */
+        .contact {
+            padding: 80px 20px;
+            background: #f8faf8;
+        }
+        
+        .contact-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .contact-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            margin-top: 50px;
+        }
+        
+        .contact-info {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .contact-info h3 {
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: #2c5f2d;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .contact-item {
+            display: flex;
+            margin-bottom: 25px;
+        }
+        
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            background: #e8f4e8;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #2c5f2d;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .contact-details h4 {
+            font-size: 18px;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .contact-details p {
+            color: #666;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        
+        .contact-form {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .contact-form h3 {
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: #2c5f2d;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .contact-form-group {
+            margin-bottom: 25px;
+        }
+        
+        .contact-form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 14px;
+        }
+        
+        .contact-form-group input,
+        .contact-form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+            background: #fafafa;
+        }
+        
+        .contact-form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .contact-form-group input:focus,
+        .contact-form-group textarea:focus {
+            outline: none;
+            border-color: #2c5f2d;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(44, 95, 45, 0.1);
+        }
+        
+        /* 表单验证样式 */
+        .error {
+            border-color: #ff3b30 !important;
+            background-color: #fff8f8 !important;
+        }
+        
+        .error-message {
+            color: #ff3b30;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        /* 页脚 */
+        footer {
+            background: #2c5f2d;
+            color: white;
+            padding: 50px 20px 30px;
+            margin-top: 0;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-section h4 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+        
+        .footer-section p, .footer-section li {
+            color: rgba(255,255,255,0.8);
+            line-height: 1.8;
+            font-size: 14px;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-section li a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .footer-section li a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .social-links a:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-3px);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.6);
+            font-size: 13px;
+        }
+        
+        /* 动画 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        /* 响应式设计 */
+        /* 移动端菜单按钮 */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            z-index: 1001;
+            position: relative;
+        }
+        
+        .mobile-menu-btn span {
+            display: block;
+            width: 25px;
+            height: 2px;
+            background: #2c5f2d;
+            margin: 5px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-menu-btn.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        
+        .mobile-menu-btn.active span:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .mobile-menu-btn.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .nav-menu {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100vh;
+                background: rgba(255, 255, 255, 0.98);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+                padding: 50px 0;
+                gap: 20px;
+            }
+            
+            .nav-menu.active {
+                display: flex;
+            }
+            
+            .nav-menu li {
+                margin: 15px 0;
+            }
+            
+            .nav-menu a {
+                font-size: 18px;
+            }
+            
+            .hero {
+                height: 500px;
+            }
+            
+            .hero h1 {
+                font-size: 32px;
+            }
+            
+            .hero p {
+                font-size: 16px;
+            }
+            
+            .location-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .contact-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .room-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+            
+            .amenities-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav id="navbar" class="scrolled">
+        <div class="nav-container">
+            <div class="logo"><i class="fas fa-tree"></i> 和風旅宿</div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#home">首页</a></li>
+                <li><a href="#features">服务特色</a></li>
+                <li><a href="#rooms">客房介绍</a></li>
+                <li><a href="#location">位置交通</a></li>
+                <li><a href="#contact">联系我们</a></li>
+            </ul>
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="菜单">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- 主横幅 -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>和風旅宿</h1>
+            <p>传统日式美学与现代商务需求的完美融合</p>
+            <button class="btn-primary" onclick="openBookingModal()">立即预订</button>
+        </div>
+    </section>
+
+    <!-- 特色服务 -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">服务特色</h2>
+            <p class="section-subtitle">为您提供宾至如归的日式待客之道</p>
+            <div class="features-grid">
+                <div class="feature-card visible" data-visible="true">
+                    <div class="feature-icon">🏮</div>
+                    <h3>传统和室</h3>
+                    <p>榻榻米房间，障子纸门，营造纯正日式氛围，让您体验地道的和风文化</p>
+                </div>
+                <div class="feature-card visible" data-visible="true">
+                    <div class="feature-icon">♨️</div>
+                    <h3>天然温泉</h3>
+                    <p>引入天然温泉水，设有露天风吕，在繁忙的商务行程后放松身心</p>
+                </div>
+                <div class="feature-card visible" data-visible="true">
+                    <div class="feature-icon">🍱</div>
+                    <h3>精致料理</h3>
+                    <p>提供正宗怀石料理与商务套餐，满足不同客人的用餐需求</p>
+                </div>
+                <div class="feature-card visible" data-visible="true">
+                    <div class="feature-icon">💼</div>
+                    <h3>商务中心</h3>
+                    <p>配备现代化会议室、高速网络，为商务人士提供完善的办公环境</p>
+                </div>
+                <div class="feature-card visible" data-visible="true">
+                    <div class="feature-icon">🚇</div>
+                    <h3>便捷交通</h3>
+                    <p>距离地铁站步行仅需3分钟，轻松抵达市中心各大商圈</p>
+                </div>
+                <div class="feature-card visible" data-visible="true">
+                    <div class="feature-icon">🌸</div>
+                    <h3>日式庭院</h3>
+                    <p>精心打造的枯山水庭院，四季花卉，为您提供静谧的休憩空间</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 客房展示 -->
+    <section class="rooms" id="rooms">
+        <div class="container">
+            <h2 class="section-title">客房介绍</h2>
+            <p class="section-subtitle">融合传统与现代的舒适空间</p>
+            <div class="room-cards">
+                <div class="room-card visible" data-visible="true">
+                    <div class="room-image"></div>
+                    <div class="room-info">
+                        <h3>标准和室</h3>
+                        <p>传统榻榻米设计，配备现代化设施，适合1-2人入住。房间面积25平米，设有独立卫浴。</p>
+                        <div class="room-price">
+                            <span class="price">¥580 <span>/ 晚</span></span>
+                            <button class="btn-primary" style="padding: 8px 25px; font-size: 14px;" onclick="openRoomDetail('standard', '标准和室', 580)">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="room-card visible" data-visible="true">
+                    <div class="room-image"></div>
+                    <div class="room-info">
+                        <h3>豪华套房</h3>
+                        <p>宽敞的和洋式套房，设有独立起居室和工作区。房间面积45平米，享有城市美景。</p>
+                        <div class="room-price">
+                            <span class="price">¥980 <span>/ 晚</span></span>
+                            <button class="btn-primary" style="padding: 8px 25px; font-size: 14px;" onclick="openRoomDetail('deluxe', '豪华套房', 980)">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="room-card visible" data-visible="true">
+                    <div class="room-image"></div>
+                    <div class="room-info">
+                        <h3>商务单间</h3>
+                        <p>专为商务人士设计，配备办公桌椅和高速网络。房间面积20平米，简约高效。</p>
+                        <div class="room-price">
+                            <span class="price">¥480 <span>/ 晚</span></span>
+                            <button class="btn-primary" style="padding: 8px 25px; font-size: 14px;" onclick="openRoomDetail('business', '商务单间', 480)">查看详情</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 客房详情区域 -->
+            <div id="roomDetailContainer">
+                <!-- 标准和室详情 -->
+                <div id="standard-detail" class="room-detail">
+                    <div class="room-detail-header">
+                        <h3 class="room-detail-title">标准和室</h3>
+                        <div class="room-detail-price">¥580 <span>/ 晚</span></div>
+                    </div>
+                    <div class="room-detail-content">
+                        <div class="room-detail-gallery" style="background-image: url('https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&amp;auto=format&amp;fit=crop&amp;w=1000&amp;q=80');"></div>
+                        <div class="room-detail-info">
+                            <div class="room-detail-description">
+                                <p>传统榻榻米设计，配备现代化设施，适合1-2人入住。房间面积25平米，设有独立卫浴。享受日式风格的宁静氛围，同时配备现代便利设施，为您提供舒适的住宿体验。</p>
+                            </div>
+                            <div class="room-detail-features">
+                                <h4>房间设施</h4>
+                                <div class="feature-list">
+                                    <div class="feature-item"><i class="fas fa-wifi"></i> 高速WiFi</div>
+                                    <div class="feature-item"><i class="fas fa-tv"></i> 智能电视</div>
+                                    <div class="feature-item"><i class="fas fa-snowflake"></i> 空调</div>
+                                    <div class="feature-item"><i class="fas fa-bath"></i> 独立卫浴</div>
+                                    <div class="feature-item"><i class="fas fa-coffee"></i> 茶具套装</div>
+                                    <div class="feature-item"><i class="fas fa-bed"></i> 舒适床垫</div>
+                                </div>
+                            </div>
+                            <div class="room-detail-actions">
+                                <button class="btn-secondary" onclick="closeRoomDetail('standard-detail')">返回</button>
+                                <button class="btn-primary" onclick="openBookingModal('standard')">立即预订</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 豪华套房详情 -->
+                <div id="deluxe-detail" class="room-detail active">
+                    <div class="room-detail-header">
+                        <h3 class="room-detail-title">豪华套房</h3>
+                        <div class="room-detail-price">¥980 <span>/ 晚</span></div>
+                    </div>
+                    <div class="room-detail-content">
+                        <div class="room-detail-gallery" style="background-image: url('https://images.unsplash.com/photo-1576675784201-0e142b423952?ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&amp;auto=format&amp;fit=crop&amp;w=1000&amp;q=80');"></div>
+                        <div class="room-detail-info">
+                            <div class="room-detail-description">
+                                <p>宽敞的和洋式套房，设有独立起居室和工作区。房间面积45平米，享有城市美景。豪华套房融合了日式美学与现代舒适，为商务旅行或休闲度假提供理想空间。</p>
+                            </div>
+                            <div class="room-detail-features">
+                                <h4>房间设施</h4>
+                                <div class="feature-list">
+                                    <div class="feature-item"><i class="fas fa-wifi"></i> 高速WiFi</div>
+                                    <div class="feature-item"><i class="fas fa-tv"></i> 65寸智能电视</div>
+                                    <div class="feature-item"><i class="fas fa-snowflake"></i> 中央空调</div>
+                                    <div class="feature-item"><i class="fas fa-bath"></i> 豪华浴缸</div>
+                                    <div class="feature-item"><i class="fas fa-coffee"></i> 咖啡机</div>
+                                    <div class="feature-item"><i class="fas fa-bed"></i> 特大床</div>
+                                    <div class="feature-item"><i class="fas fa-briefcase"></i> 工作区</div>
+                                    <div class="feature-item"><i class="fas fa-couch"></i> 休息区</div>
+                                </div>
+                            </div>
+                            <div class="room-detail-actions">
+                                <button class="btn-secondary" onclick="closeRoomDetail('deluxe-detail')">返回</button>
+                                <button class="btn-primary" onclick="openBookingModal('deluxe')">立即预订</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 商务单间详情 -->
+                <div id="business-detail" class="room-detail">
+                    <div class="room-detail-header">
+                        <h3 class="room-detail-title">商务单间</h3>
+                        <div class="room-detail-price">¥480 <span>/ 晚</span></div>
+                    </div>
+                    <div class="room-detail-content">
+                        <div class="room-detail-gallery" style="background-image: url('https://images.unsplash.com/photo-1611892440504-42a792e24d32?ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&amp;auto=format&amp;fit=crop&amp;w=1000&amp;q=80');"></div>
+                        <div class="room-detail-info">
+                            <div class="room-detail-description">
+                                <p>专为商务人士设计，配备办公桌椅和高速网络。房间面积20平米，简约高效。商务单间注重功能性与舒适度的平衡，为您的商务旅行提供高效便捷的住宿选择。</p>
+                            </div>
+                            <div class="room-detail-features">
+                                <h4>房间设施</h4>
+                                <div class="feature-list">
+                                    <div class="feature-item"><i class="fas fa-wifi"></i> 高速WiFi</div>
+                                    <div class="feature-item"><i class="fas fa-tv"></i> 智能电视</div>
+                                    <div class="feature-item"><i class="fas fa-snowflake"></i> 空调</div>
+                                    <div class="feature-item"><i class="fas fa-shower"></i> 淋浴间</div>
+                                    <div class="feature-item"><i class="fas fa-coffee"></i> 咖啡机</div>
+                                    <div class="feature-item"><i class="fas fa-bed"></i> 单人床</div>
+                                    <div class="feature-item"><i class="fas fa-briefcase"></i> 工作区</div>
+                                    <div class="feature-item"><i class="fas fa-print"></i> 打印服务</div>
+                                </div>
+                            </div>
+                            <div class="room-detail-actions">
+                                <button class="btn-secondary" onclick="closeRoomDetail('business-detail')">返回</button>
+                                <button class="btn-primary" onclick="openBookingModal('business')">立即预订</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 位置信息 -->
+    <section class="location" id="location">
+        <div class="container">
+            <h2 class="section-title">位置交通</h2>
+            <p class="section-subtitle">便利的地理位置，轻松抵达</p>
+            <div class="location-content">
+                <div class="location-info">
+                    <h3>酒店地址</h3>
+                    <div class="location-item">东京都中央区银座3-15-8</div>
+                    <div class="location-item">距离银座站3分钟步行路程</div>
+                    <div class="location-item">距离东京站10分钟车程</div>
+                    <div class="location-item">距离羽田机场30分钟车程</div>
+                    
+                    <h3 style="margin-top: 40px;">周边设施</h3>
+                    <div class="location-item">银座购物中心 - 步行5分钟</div>
+                    <div class="location-item">筑地市场 - 步行10分钟</div>
+                    <div class="location-item">皇居 - 地铁15分钟</div>
+                </div>
+                <div id="map">
+                    <div style="width:100%;height:400px;background:#e8f4e8;border-radius:15px;overflow:hidden;position:relative;">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6481.64612443853!2d139.7616921157377!3d35.67320098019348!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x60188bfd3d9b9d0f%3A0x67f0c4d0f4a4d7f!2sGinza%2C%20Chuo%20City%2C%20Tokyo%20104-0061!5e0!3m2!1sen!2sjp!4v1689231310685!5m2!1sen!2sjp" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        <div style="position:absolute;top:20px;left:20px;background:white;padding:10px 15px;border-radius:10px;box-shadow:0 3px 10px rgba(0,0,0,0.1);">
+                            <div style="font-weight:bold;">和風旅宿</div>
+                            <div style="font-size:13px;color:#666;">东京都中央区银座3-15-8</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 联系我们 -->
+    <section class="contact" id="contact">
+        <div class="contact-container">
+            <h2 class="section-title">联系我们</h2>
+            <p class="section-subtitle">随时为您提供专业服务</p>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3>联系信息</h3>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>酒店地址</h4>
+                            <p>东京都中央区银座3-15-8<br>104-0061 日本东京</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>电话</h4>
+                            <p>预订专线: +81-3-1234-5678<br>服务热线: +81-3-1234-5679</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>电子邮件</h4>
+                            <p>预订: reservation@wafuryado.jp<br>咨询: info@wafuryado.jp</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>营业时间</h4>
+                            <p>前台: 24小时<br>餐厅: 7:00-22:00<br>温泉: 6:00-24:00</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <h3>发送消息</h3>
+                    <form id="contactForm">
+                        <div class="contact-form-group">
+                            <label for="contactName">姓名 *</label>
+                            <input type="text" id="contactName" name="contactName" required="" placeholder="请输入您的姓名">
+                        </div>
+                        <div class="contact-form-group">
+                            <label for="contactEmail">邮箱 *</label>
+                            <input type="email" id="contactEmail" name="contactEmail" required="" placeholder="请输入您的邮箱">
+                        </div>
+                        <div class="contact-form-group">
+                            <label for="contactPhone">电话</label>
+                            <input type="tel" id="contactPhone" name="contactPhone" placeholder="请输入您的电话">
+                        </div>
+                        <div class="contact-form-group">
+                            <label for="contactSubject">主题</label>
+                            <input type="text" id="contactSubject" name="contactSubject" placeholder="请输入主题">
+                        </div>
+                        <div class="contact-form-group">
+                            <label for="contactMessage">消息 *</label>
+                            <textarea id="contactMessage" name="contactMessage" required="" placeholder="请输入您的消息内容..."></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary" style="width: 100%;">发送消息</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 预订模态框 -->
+    <div id="bookingModal" class="modal booking-modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeBookingModal()">×</button>
+            <div class="modal-header">
+                <h2>在线预订</h2>
+            </div>
+            <form class="booking-form" onsubmit="handleBookingSubmit(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>入住日期 *</label>
+                        <input type="date" required="" id="checkinDate" min="2025-09-20">
+                    </div>
+                    <div class="form-group">
+                        <label>退房日期 *</label>
+                        <input type="date" required="" id="checkoutDate" min="2025-09-21">
+                    </div>
+                    <div class="form-group">
+                        <label>房型选择 *</label>
+                        <select required="" id="roomType" onchange="updateBookingSummary()">
+                            <option value="">请选择房型</option>
+                            <option value="standard">标准和室 - ¥580/晚</option>
+                            <option value="deluxe">豪华套房 - ¥980/晚</option>
+                            <option value="business">商务单间 - ¥480/晚</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>房间数量 *</label>
+                        <select required="" id="roomCount" onchange="updateBookingSummary()">
+                            <option value="1">1间</option>
+                            <option value="2">2间</option>
+                            <option value="3">3间</option>
+                            <option value="4">4间</option>
+                            <option value="5">5间</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="guestName">姓名 *</label>
+                        <input type="text" id="guestName" name="guestName" required="" placeholder="请输入您的姓名">
+                    </div>
+                    <div class="form-group">
+                        <label for="guestPhone">电话 *</label>
+                        <input type="tel" id="guestPhone" name="guestPhone" required="" placeholder="请输入您的电话">
+                    </div>
+                    <div class="form-group">
+                        <label for="guestEmail">邮箱 *</label>
+                        <input type="email" id="guestEmail" name="guestEmail" required="" placeholder="请输入您的邮箱">
+                    </div>
+                    <div class="form-group">
+                        <label for="specialRequests">特殊要求</label>
+                        <textarea id="specialRequests" name="specialRequests" placeholder="请告诉我们您的特殊需求，如楼层偏好、无障碍设施需求等"></textarea>
+                    </div>
+                </div>
+                
+                <div class="booking-summary">
+                    <h3>预订摘要</h3>
+                    <div class="summary-item">
+                        <span>房型:</span>
+                        <span id="summaryRoomType">未选择</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>入住日期:</span>
+                        <span id="summaryCheckin">2025年9月20日</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>退房日期:</span>
+                        <span id="summaryCheckout">2025年9月21日</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>房间数:</span>
+                        <span id="summaryRoomCount">1</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>晚数:</span>
+                        <span id="summaryNights">1</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>单价:</span>
+                        <span id="summaryPrice">¥0</span>
+                    </div>
+                    <div class="summary-item summary-total">
+                        <span>总计:</span>
+                        <span id="summaryTotal">¥0</span>
+                    </div>
+                </div>
+                
+                <div class="form-buttons">
+                    <button type="button" class="btn-secondary" onclick="closeBookingModal()">取消</button>
+                    <button type="submit" class="btn-primary">确认预订</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>和風旅宿</h4>
+                <p>融合传统日式美学与现代商务需求的高级酒店，提供精致舒适的和式住宿体验。</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-line"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h4>快速链接</h4>
+                <ul>
+                    <li><a href="#home">首页</a></li>
+                    <li><a href="#features">服务特色</a></li>
+                    <li><a href="#rooms">客房介绍</a></li>
+                    <li><a href="#location">位置交通</a></li>
+                    <li><a href="#contact">联系我们</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>联系方式</h4>
+                <ul>
+                    <li><i class="fas fa-map-marker-alt"></i> 东京都中央区银座3-15-8</li>
+                    <li><i class="fas fa-phone"></i> +81-3-1234-5678</li>
+                    <li><i class="fas fa-envelope"></i> info@wafuryado.jp</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>订阅资讯</h4>
+                <p>订阅我们的邮件列表，获取最新优惠和活动信息。</p>
+                <form id="subscribeForm" onsubmit="handleSubscribeSubmit(event)">
+                    <input type="email" id="subscribeEmail" name="subscribeEmail" placeholder="您的邮箱地址" required="" style="width: 100%; padding: 10px; margin-top: 10px; border-radius: 5px; border: none;">
+                    <button type="submit" class="btn-primary" style="margin-top: 10px; width: 100%;">订阅</button>
+                </form>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2023 和風旅宿. 保留所有权利 | 隐私政策 | 使用条款
+        </div>
+    </footer>
+
+    <script>
+        // 防抖函数
+        function debounce(func, wait) {
+            let timeout;
+            return function() {
+                const context = this;
+                const args = arguments;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    func.apply(context, args);
+                }, wait);
+            };
+        }
+        
+        // 初始化页面加载
+        document.addEventListener('DOMContentLoaded', function() {
+            // 设置默认日期
+            setDefaultDates();
+            
+            // 初始化地图
+            initMap();
+            
+            // 监听滚动事件（使用防抖优化性能）
+            window.addEventListener('scroll', debounce(handleScroll, 15));
+            
+            // 初始化滚动动画
+            initScrollAnimations();
+            
+            // 设置联系我们表单提交事件
+            const contactForm = document.getElementById('contactForm');
+            if (contactForm) {
+                contactForm.addEventListener('submit', handleContactSubmit);
+            }
+            
+            // 初始触发一次滚动动画
+            triggerScrollAnimations();
+            
+            // 移动端菜单功能
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const navMenu = document.getElementById('navMenu');
+            
+            if (mobileMenuBtn && navMenu) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    navMenu.classList.toggle('active');
+                    document.body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : '';
+                });
+                
+                // 点击菜单项关闭菜单
+                const menuLinks = navMenu.querySelectorAll('a');
+                menuLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        mobileMenuBtn.classList.remove('active');
+                        navMenu.classList.remove('active');
+                        document.body.style.overflow = '';
+                    });
+                });
+            }
+        });
+        
+        // 初始化Google地图
+        function initMap() {
+            try {
+                // 使用Google Maps API
+                // 实际项目中替换为您的API密钥
+                const mapElement = document.getElementById('map');
+                
+                if (!mapElement) {
+                    console.error('地图容器元素未找到');
+                    return;
+                }
+                
+                // 使用静态地图作为示例（实际项目中使用Google Maps API）
+                mapElement.innerHTML = `
+                    <div style="width:100%;height:400px;background:#e8f4e8;border-radius:15px;overflow:hidden;position:relative;">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6481.64612443853!2d139.7616921157377!3d35.67320098019348!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x60188bfd3d9b9d0f%3A0x67f0c4d0f4a4d7f!2sGinza%2C%20Chuo%20City%2C%20Tokyo%20104-0061!5e0!3m2!1sen!2sjp!4v1689231310685!5m2!1sen!2sjp" 
+                                width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        <div style="position:absolute;top:20px;left:20px;background:white;padding:10px 15px;border-radius:10px;box-shadow:0 3px 10px rgba(0,0,0,0.1);">
+                            <div style="font-weight:bold;">和風旅宿</div>
+                            <div style="font-size:13px;color:#666;">东京都中央区银座3-15-8</div>
+                        </div>
+                    </div>
+                `;
+                
+                // 添加错误处理
+                const iframe = mapElement.querySelector('iframe');
+                if (iframe) {
+                    iframe.onerror = function() {
+                        console.error('地图加载失败');
+                        mapElement.innerHTML = `
+                            <div style="width:100%;height:400px;background:#e8f4e8;border-radius:15px;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;">
+                                <div>
+                                    <div style="font-size:24px;margin-bottom:10px;color:#666;">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                    </div>
+                                    <h3 style="margin-bottom:10px;color:#333;">地图加载失败</h3>
+                                    <p style="color:#666;">我们的地址：东京都中央区银座3-15-8</p>
+                                </div>
+                            </div>
+                        `;
+                    };
+                }
+            } catch (error) {
+                console.error('初始化地图时出错:', error);
+                const mapElement = document.getElementById('map');
+                if (mapElement) {
+                    mapElement.innerHTML = `
+                        <div style="width:100%;height:400px;background:#e8f4e8;border-radius:15px;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;">
+                            <div>
+                                <div style="font-size:24px;margin-bottom:10px;color:#666;">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <h3 style="margin-bottom:10px;color:#333;">地图加载失败</h3>
+                                <p style="color:#666;">请稍后再试或联系我们获取详细地址</p>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        }
+        
+        // 设置默认日期
+        function setDefaultDates() {
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            
+            const formattedToday = formatDate(today);
+            const formattedTomorrow = formatDate(tomorrow);
+            
+            // 设置日期选择器的最小值为今天
+            const checkinDateInput = document.getElementById('checkinDate');
+            const checkoutDateInput = document.getElementById('checkoutDate');
+            
+            checkinDateInput.min = formattedToday;
+            checkoutDateInput.min = formattedTomorrow;
+            
+            checkinDateInput.value = formattedToday;
+            checkoutDateInput.value = formattedTomorrow;
+            
+            // 添加日期变更事件监听
+            checkinDateInput.addEventListener('change', function() {
+                // 确保退房日期至少比入住日期晚一天
+                const newCheckinDate = new Date(this.value);
+                const nextDay = new Date(newCheckinDate);
+                nextDay.setDate(nextDay.getDate() + 1);
+                
+                checkoutDateInput.min = formatDate(nextDay);
+                
+                // 如果当前选择的退房日期早于新的入住日期+1天，则更新退房日期
+                if (new Date(checkoutDateInput.value) <= newCheckinDate) {
+                    checkoutDateInput.value = formatDate(nextDay);
+                }
+                
+                updateBookingSummary();
+            });
+            
+            checkoutDateInput.addEventListener('change', updateBookingSummary);
+            
+            // 更新预订摘要
+            updateBookingSummary();
+        }
+        
+        // 日期格式化
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
+        // 打开预订模态框
+        function openBookingModal() {
+            document.getElementById('bookingModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // 关闭预订模态框
+        function closeBookingModal() {
+            document.getElementById('bookingModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        // 打开客房详情
+        function openRoomDetail(roomType, roomName, price) {
+            // 隐藏所有房间详情
+            document.querySelectorAll('.room-detail').forEach(detail => {
+                detail.classList.remove('active');
+            });
+            
+            // 显示选中的房间详情
+            const detailElement = document.getElementById(`${roomType}-detail`);
+            if (detailElement) {
+                detailElement.classList.add('active');
+                
+                // 滚动到详情区域
+                detailElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+        
+        // 关闭客房详情
+        function closeRoomDetail(detailId) {
+            const detailElement = document.getElementById(detailId);
+            if (detailElement) {
+                detailElement.classList.remove('active');
+                
+                // 滚动回房间列表
+                document.getElementById('rooms').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+        
+        // 更新预订摘要
+        function updateBookingSummary() {
+            const roomTypeSelect = document.getElementById('roomType');
+            const roomCountSelect = document.getElementById('roomCount');
+            const checkinDate = document.getElementById('checkinDate').value;
+            const checkoutDate = document.getElementById('checkoutDate').value;
+            
+            // 检查元素是否存在
+            if (!roomTypeSelect || !roomCountSelect) {
+                console.error('找不到房型或房间数量选择器');
+                return;
+            }
+            
+            // 更新预订摘要
+            const summaryRoomType = document.getElementById('summaryRoomType');
+            if (summaryRoomType) {
+                summaryRoomType.textContent = roomTypeSelect.selectedIndex > 0 ? 
+                    roomTypeSelect.options[roomTypeSelect.selectedIndex].text : '未选择';
+            }
+            
+            const summaryRoomCount = document.getElementById('summaryRoomCount');
+            if (summaryRoomCount) {
+                summaryRoomCount.textContent = roomCountSelect.value || '1';
+            }
+            
+            const summaryCheckin = document.getElementById('summaryCheckin');
+            if (summaryCheckin) {
+                summaryCheckin.textContent = checkinDate ? formatDisplayDate(checkinDate) : '未选择';
+            }
+            
+            const summaryCheckout = document.getElementById('summaryCheckout');
+            if (summaryCheckout) {
+                summaryCheckout.textContent = checkoutDate ? formatDisplayDate(checkoutDate) : '未选择';
+            }
+            
+            // 计算晚数
+            let nights = 0;
+            if (checkinDate && checkoutDate) {
+                const checkinDateTime = new Date(checkinDate).getTime();
+                const checkoutDateTime = new Date(checkoutDate).getTime();
+                
+                if (!isNaN(checkinDateTime) && !isNaN(checkoutDateTime) && checkoutDateTime > checkinDateTime) {
+                    const diffTime = Math.abs(checkoutDateTime - checkinDateTime);
+                    nights = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                }
+            }
+            
+            const summaryNights = document.getElementById('summaryNights');
+            if (summaryNights) {
+                summaryNights.textContent = nights;
+            }
+            
+            // 计算价格
+            let price = 0;
+            if (roomTypeSelect.value === 'standard') price = 580;
+            else if (roomTypeSelect.value === 'deluxe') price = 980;
+            else if (roomTypeSelect.value === 'business') price = 480;
+            
+            const summaryPrice = document.getElementById('summaryPrice');
+            if (summaryPrice) {
+                summaryPrice.textContent = `¥${price}`;
+            }
+            
+            // 计算总价
+            let total = 0;
+            if (price > 0 && nights > 0 && roomCountSelect.value) {
+                total = price * nights * parseInt(roomCountSelect.value || 1);
+            }
+            
+            const summaryTotal = document.getElementById('summaryTotal');
+            if (summaryTotal) {
+                summaryTotal.textContent = `¥${total}`;
+            }
+        }
+        
+        // 格式化显示日期
+        function formatDisplayDate(dateString) {
+            const date = new Date(dateString);
+            return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
+        }
+        
+        // 处理预订提交
+        function handleBookingSubmit(event) {
+            event.preventDefault();
+            
+            // 表单验证
+            const form = event.target;
+            const formElements = form.elements;
+            let isValid = true;
+            
+            // 基本验证
+            for (let i = 0; i < formElements.length; i++) {
+                const element = formElements[i];
+                if (element.required && !element.value.trim()) {
+                    isValid = false;
+                    element.classList.add('error');
+                    // 添加错误提示
+                    const errorMsg = element.parentNode.querySelector('.error-message');
+                    if (!errorMsg) {
+                        const msg = document.createElement('div');
+                        msg.className = 'error-message';
+                        msg.textContent = '此字段为必填项';
+                        msg.style.color = 'red';
+                        msg.style.fontSize = '12px';
+                        msg.style.marginTop = '5px';
+                        element.parentNode.appendChild(msg);
+                    }
+                } else if (element.required) {
+                    element.classList.remove('error');
+                    const errorMsg = element.parentNode.querySelector('.error-message');
+                    if (errorMsg) {
+                        errorMsg.remove();
+                    }
+                }
+            }
+            
+            // 验证电子邮件格式
+            const emailInput = form.querySelector('input[type="email"]');
+            if (emailInput && emailInput.value) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(emailInput.value)) {
+                    isValid = false;
+                    emailInput.classList.add('error');
+                    const errorMsg = emailInput.parentNode.querySelector('.error-message');
+                    if (!errorMsg) {
+                        const msg = document.createElement('div');
+                        msg.className = 'error-message';
+                        msg.textContent = '请输入有效的电子邮件地址';
+                        msg.style.color = 'red';
+                        msg.style.fontSize = '12px';
+                        msg.style.marginTop = '5px';
+                        emailInput.parentNode.appendChild(msg);
+                    }
+                }
+            }
+            
+            // 验证电话号码格式
+            const phoneInput = form.querySelector('input[type="tel"]');
+            if (phoneInput && phoneInput.value) {
+                const phoneRegex = /^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,4}[-\s.]?[0-9]{1,9}$/;
+                if (!phoneRegex.test(phoneInput.value)) {
+                    isValid = false;
+                    phoneInput.classList.add('error');
+                    const errorMsg = phoneInput.parentNode.querySelector('.error-message');
+                    if (!errorMsg) {
+                        const msg = document.createElement('div');
+                        msg.className = 'error-message';
+                        msg.textContent = '请输入有效的电话号码';
+                        msg.style.color = 'red';
+                        msg.style.fontSize = '12px';
+                        msg.style.marginTop = '5px';
+                        phoneInput.parentNode.appendChild(msg);
+                    }
+                }
+            }
+            
+            // 验证日期
+            const checkinDate = new Date(document.getElementById('checkinDate').value);
+            const checkoutDate = new Date(document.getElementById('checkoutDate').value);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            if (checkinDate < today) {
+                isValid = false;
+                alert('入住日期不能早于今天');
+            } else if (checkoutDate <= checkinDate) {
+                isValid = false;
+                alert('退房日期必须晚于入住日期');
+            }
+            
+            if (isValid) {
+                // 安全地处理表单数据
+                const formData = new FormData(form);
+                const bookingData = {};
+                
+                for (const [key, value] of formData.entries()) {
+                    // 防止XSS攻击，对用户输入进行转义
+                    bookingData[key] = String(value)
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#039;');
+                }
+                
+                // 这里可以添加AJAX请求发送数据到服务器
+                console.log('预订数据:', bookingData);
+                
+                alert('预订请求已提交！我们的工作人员将尽快与您联系确认预订详情。');
+                closeBookingModal();
+                form.reset();
+            }
+            
+            return false;
+        }
+        
+        // 处理联系我们表单提交
+        function handleContactSubmit(event) {
+            event.preventDefault();
+            
+            // 表单验证
+            const form = event.target;
+            const formElements = form.elements;
+            let isValid = true;
+            
+            // 基本验证
+            for (let i = 0; i < formElements.length; i++) {
+                const element = formElements[i];
+                if (element.required && !element.value.trim()) {
+                    isValid = false;
+                    element.classList.add('error');
+                    // 添加错误提示
+                    const errorMsg = element.parentNode.querySelector('.error-message');
+                    if (!errorMsg) {
+                        const msg = document.createElement('div');
+                        msg.className = 'error-message';
+                        msg.textContent = '此字段为必填项';
+                        msg.style.color = 'red';
+                        msg.style.fontSize = '12px';
+                        msg.style.marginTop = '5px';
+                        element.parentNode.appendChild(msg);
+                    }
+                } else if (element.required) {
+                    element.classList.remove('error');
+                    const errorMsg = element.parentNode.querySelector('.error-message');
+                    if (errorMsg) {
+                        errorMsg.remove();
+                    }
+                }
+            }
+            
+            // 验证电子邮件格式
+            const emailInput = document.getElementById('contactEmail');
+            if (emailInput && emailInput.value) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(emailInput.value)) {
+                    isValid = false;
+                    emailInput.classList.add('error');
+                    const errorMsg = emailInput.parentNode.querySelector('.error-message');
+                    if (!errorMsg) {
+                        const msg = document.createElement('div');
+                        msg.className = 'error-message';
+                        msg.textContent = '请输入有效的电子邮件地址';
+                        msg.style.color = 'red';
+                        msg.style.fontSize = '12px';
+                        msg.style.marginTop = '5px';
+                        emailInput.parentNode.appendChild(msg);
+                    }
+                }
+            }
+            
+            if (isValid) {
+                // 安全地处理表单数据
+                const formData = new FormData(form);
+                const contactData = {};
+                
+                for (const [key, value] of formData.entries()) {
+                    // 防止XSS攻击，对用户输入进行转义
+                    contactData[key] = String(value)
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#039;');
+                }
+                
+                // 这里可以添加AJAX请求发送数据到服务器
+                console.log('联系表单数据:', contactData);
+                
+                alert('您的消息已发送成功！我们将尽快回复您。');
+                form.reset();
+            }
+            
+            return false;
+        }
+        
+        // 处理滚动事件
+        function handleScroll() {
+            // 导航栏滚动效果
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+            
+            // 滚动动画触发
+            triggerScrollAnimations();
+        }
+        
+        // 初始化滚动动画
+        function initScrollAnimations() {
+            // 为所有需要动画的元素添加可见性检测
+            document.querySelectorAll('.feature-card, .room-card').forEach(card => {
+                card.dataset.visible = 'false';
+            });
+        }
+        
+        // 触发滚动动画
+        function triggerScrollAnimations() {
+            document.querySelectorAll('.feature-card, .room-card').forEach(card => {
+                if (card.dataset.visible === 'false') {
+                    const position = card.getBoundingClientRect();
+                    if (position.top < window.innerHeight * 0.8) {
+                        card.classList.add('visible');
+                        card.dataset.visible = 'true';
+                    }
+                }
+            });
+        }
+        
+        // 处理订阅表单提交
+        function handleSubscribeSubmit(event) {
+            event.preventDefault();
+            
+            const emailInput = document.getElementById('subscribeEmail');
+            const email = emailInput.value.trim();
+            
+            // 验证电子邮件格式
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert('请输入有效的电子邮件地址');
+                emailInput.focus();
+                return false;
+            }
+            
+            // 安全处理数据
+            const safeEmail = email
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+            
+            // 这里可以添加AJAX请求发送数据到服务器
+            console.log('订阅邮箱:', safeEmail);
+            
+            alert('感谢您的订阅！我们将定期发送最新优惠和活动信息。');
+            document.getElementById('subscribeForm').reset();
+            
+            return false;
+        }
+    </script>
+
+</body></html>
